@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SV | SHAHZAIB VAULT - MASTER CHRONOMETER</title>
+    
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP (Animation Engine) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <!-- FONTS -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,400,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Helvetica+Now+Display:wght@100;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* ROLEX-INSPIRED PALETTE (Red/Brown/White) */
+            --bg-white: #FFFFFF;
+            --bg-off-white: #F8F5F2; /* Cream tint */
+            --ruby-red: #8B0000;      /* Luxury Red */
+            --leather-brown: #3E2723; /* Dark Brown */
+            --bronze: #8D6E63;        /* Light Brown */
+        }
+
+        body {
+            background-color: var(--bg-white);
+            color: var(--leather-brown);
+            font-family: 'Helvetica Now Display', sans-serif; /* Rolex uses Helvetica mostly */
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* TYPOGRAPHY */
+        .font-rolex { font-family: 'Cinzel', serif; } /* For Headers */
+        .font-tech { font-family: 'Clash Display', sans-serif; }
+
+        /* BUTTONS */
+        .btn-ruby {
+            background-color: var(--ruby-red);
+            color: white;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-ruby:hover {
+            background-color: #600000;
+            padding-left: 2.5rem;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--leather-brown);
+            color: var(--leather-brown);
+            background: transparent;
+        }
+        .btn-outline:hover {
+            background: var(--leather-brown);
+            color: white;
+        }
+
+        /* CARD HOVER EFFECT (Rolex Clean Style) */
+        .product-card {
+            background: white;
+            border: 1px solid #EAEAEA;
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            border-color: var(--ruby-red);
+            box-shadow: 0 20px 40px rgba(139, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(62, 39, 35, 0.1);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fff; }
+        ::-webkit-scrollbar-thumb { background: var(--ruby-red); }
+
+        /* HERO VIDEO OVERLAY */
+        .hero-overlay {
+            background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.4) 100%);
+        }
+
+        /* UTILS */
+        .view-section { display: none; opacity: 0; }
+        .view-section.active { display: block; opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-5 transition-all duration-300" id="navbar">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="switchView('landing')">
+            <!-- CROWN ICON (SVG) in RUBY RED -->
+            <svg class="w-8 h-8 text-[#8B0000]" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"></path></svg>
+            <span class="text-2xl font-rolex font-bold tracking-widest text-[#3E2723]">SV.</span>
+        </div>
+        
+        <div class="hidden md:flex gap-12 text-[11px] tracking-[0.2em] uppercase font-bold text-[#3E2723]">
+            <a onclick="switchView('landing')" class="cursor-pointer hover:text-[#8B0000] transition-colors">Home</a>
+            <a onclick="switchView('collection')" class="cursor-pointer hover:text-[#8B0000] transition-colors">Watches & Audio</a>
+            <a onclick="scrollToSection('#concierge')" class="cursor-pointer hover:text-[#8B0000] transition-colors">Concierge</a>
+        </div>
+
+        <div class="flex gap-4">
+             <button onclick="switchView('collection')" class="text-[10px] font-bold uppercase tracking-widest border border-[#8B0000] text-[#8B0000] px-6 py-2 hover:bg-[#8B0000] hover:text-white transition-all">
+                The Collection
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- VIEW 1: LANDING (ROLEX STYLE) -->
+    <!-- ============================================ -->
+    <div id="landing-view" class="view-section active">
+        
+        <!-- HERO SECTION -->
+        <section class="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden">
+            <!-- VIDEO BACKGROUND -->
+            <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover z-[-1]">
+                <source src="videos/luxury.mp4" type="video/mp4"> 
+                <!-- Fallback if no video -->
+                <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=2000" class="w-full h-full object-cover">
+            </video>
+            
+            <div class="hero-overlay absolute inset-0 z-0"></div>
+
+            <div class="relative z-10 mt-20">
+                <div class="flex justify-center mb-6 opacity-0 intro-anim">
+                    <svg class="w-16 h-16 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"></path></svg>
+                </div>
+                <h1 class="text-5xl md:text-8xl font-rolex font-bold text-white mb-4 drop-shadow-xl opacity-0 intro-anim">
+                    SHAHZAIB<br>VAULT
+                </h1>
+                <p class="text-white/90 text-sm tracking-[0.3em] uppercase mb-10 font-bold drop-shadow-md opacity-0 intro-anim">
+                    Superlative Engineering
+                </p>
+                <button onclick="switchView('collection')" class="btn-ruby px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase rounded-sm opacity-0 intro-anim shadow-xl">
+                    Discover The Vault
+                </button>
+            </div>
+        </section>
+
+        <!-- INTRO TEXT (White Background) -->
+        <section class="py-24 px-6 md:px-32 bg-white text-center">
+            <h2 class="text-[#8B0000] text-xs font-bold tracking-[0.2em] uppercase mb-6">Perpetual Excellence</h2>
+            <p class="text-2xl md:text-4xl font-serif text-[#3E2723] leading-snug max-w-4xl mx-auto">
+                SV represents the pinnacle of wireless audio and horological craftsmanship. 
+                Every piece is curated for the discerning individual who demands <span class="text-[#8B0000]">precision</span>.
+            </p>
+        </section>
+
+        <!-- SPLIT BANNER (Brown & Red Theme) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 h-auto md:h-[80vh]">
+            <div class="bg-[#F8F5F2] flex flex-col justify-center p-12 md:p-24 border-r border-[#EAEAEA]">
+                <h3 class="text-[#8B0000] font-bold tracking-widest text-xs uppercase mb-4">New Arrival</h3>
+                <h2 class="text-5xl font-rolex text-[#3E2723] mb-6">The Ruby Day-Date</h2>
+                <p class="text-[#5D4037] mb-8 leading-relaxed">
+                    Featuring a bespoke burgundy dial and 18 ct Everose gold. 
+                    The realization of an ideal.
+                </p>
+                <button onclick="selectProduct('Ruby Day-Date', 45000)" class="text-[#3E2723] border-b border-[#3E2723] pb-1 self-start hover:text-[#8B0000] hover:border-[#8B0000] transition-colors text-xs tracking-widest uppercase font-bold">
+                    Configure
+                </button>
+            </div>
+            <div class="h-[50vh] md:h-full relative overflow-hidden group">
+                <img src="/images /photo0.jpg" class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105">
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ============================================ -->
+    <!-- VIEW 2: COLLECTION (35 PRODUCTS) -->
+    <!-- ============================================ -->
+    <div id="collection-view" class="view-section bg-[#F8F5F2] pt-32 pb-20 px-6 md:px-12 min-h-screen">
+        
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-rolex text-[#3E2723] mb-4">The Collection</h1>
+            <div class="w-24 h-1 bg-[#8B0000] mx-auto mb-8"></div>
+            
+            <!-- FILTERS (Rolex Style: Clean Text) -->
+            <div class="flex flex-wrap justify-center gap-8 text-xs font-bold tracking-[0.2em] uppercase text-[#8D6E63]">
+                <button onclick="filterGrid('all')" class="hover:text-[#8B0000] text-[#3E2723] transition-colors">All Models</button>
+                <button onclick="filterGrid('Watch')" class="hover:text-[#8B0000] transition-colors">Watches</button>
+                <button onclick="filterGrid('Audio')" class="hover:text-[#8B0000] transition-colors">Audio</button>
+                <button onclick="filterGrid('Tech')" class="hover:text-[#8B0000] transition-colors">Accessories</button>
+            </div>
+        </div>
+
+        <!-- GRID -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-l border-[#E0E0E0]">
+            <!-- JS INJECTS ITEMS HERE -->
+        </div>
+
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CONCIERGE (White/Brown) -->
+    <!-- ============================================ -->
+    <section id="concierge" class="py-24 px-6 bg-[#3E2723] text-white">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            
+            <div>
+                <h2 class="text-4xl font-rolex mb-6">Official Retailer</h2>
+                <p class="text-[#D7CCC8] leading-relaxed mb-8 font-light">
+                    SV is proud to be part of the worldwide network of Official Retailers, allowed to sell and maintain Rolex watches and premium audio gear. We certify the authenticity of your new purchase.
+                </p>
+                <div class="flex items-center gap-4 text-[#D7CCC8] text-sm">
+                    <div class="w-10 h-10 rounded-full border border-[#D7CCC8] flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    </div>
+                    <span>+92 325 7854274</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-sm shadow-2xl">
+                <p class="text-[#8B0000] text-xs font-bold uppercase tracking-widest mb-4">Make an Inquiry</p>
+                
+                <div class="mb-6 p-4 bg-[#F8F5F2] border-l-4 border-[#8B0000]">
+                    <p class="text-[10px] text-gray-500 uppercase">Selected Model</p>
+                    <p id="selected-product-name" class="text-lg font-serif text-[#3E2723]">None Selected</p>
+                    <p id="selected-product-price" class="text-sm font-bold text-[#8B0000]">--</p>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="text" id="customer-name" placeholder="Title & Surname" class="w-full bg-transparent border-b border-gray-300 py-3 text-[#3E2723] focus:border-[#8B0000] outline-none">
+                    <input type="text" id="customer-city" placeholder="City of Residence" class="w-full bg-transparent border-b border-gray-300 py-3 text-[#3E2723] focus:border-[#8B0000] outline-none">
+                    
+                    <button onclick="sendToWhatsApp()" class="w-full btn-ruby py-4 mt-4 font-bold tracking-[0.2em] uppercase text-xs">
+                        Contact via WhatsApp
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER (Deep Brown) -->
+    <footer class="bg-[#2D1B18] text-[#D7CCC8] py-12 text-center border-t border-white/5">
+        <svg class="w-10 h-10 mx-auto mb-6 text-[#8B0000]" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"></path></svg>
+        <p class="font-rolex text-xl text-white mb-2">SHAHZAIB VAULT</p>
+        <p class="text-[10px] uppercase tracking-[0.3em] opacity-60">Pakistan • New York • Dubai</p>
+    </footer>
+
+    <!-- LOGIC -->
+    <script>
+        // === 1. PRODUCT GENERATOR (35 ITEMS) ===
+        // Note: Using images that fit the "White/Clean" aesthetic more
+        const products = [];
+        const categories = ['Watch', 'Audio', 'Tech'];
+        const images = {
+            Watch: [
+                "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?q=80&w=1000", // Clean Silver
+                "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?q=80&w=1000", // Luxury
+                "https://images.unsplash.com/photo-1548171915-e79a380a2a4b?q=80&w=1000"  // Leather
+            ],
+            Audio: [
+                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000", // Gold/White
+                "https://images.unsplash.com/photo-1628202926206-c63a34b1618f?q=80&w=1000", // White Max
+                "https://images.unsplash.com/photo-1572569028738-411a39310079?q=80&w=1000"  // White Buds
+            ],
+            Tech: [
+                "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?q=80&w=1000",
+                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000"
+            ]
+        };
+
+        function generateProducts() {
+            for(let i=1; i<=35; i++) {
+                const cat = categories[i % 3];
+                const imgList = images[cat];
+                const img = imgList[i % imgList.length];
+                
+                products.push({
+                    id: i,
+                    name: `SV Model ${1000 + i}`,
+                    category: cat,
+                    price: (cat === 'Watch' ? 8000 + (i * 150) : 250 + (i * 20)),
+                    image: img
+                });
+            }
+        }
+        generateProducts();
+
+        // === 2. RENDER GRID (ROLEX STYLE) ===
+        function renderGrid(filter = 'all') {
+            const container = document.getElementById('products-grid');
+            container.innerHTML = '';
+            
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = "product-card p-8 flex flex-col items-center text-center cursor-pointer border-r border-b border-[#E0E0E0] hover:z-10 relative group";
+                div.onclick = () => selectProduct(p.name, p.price);
+                
+                div.innerHTML = `
+                    <div class="w-full h-48 overflow-hidden mb-6 flex items-center justify-center">
+                        <img src="${p.image}" class="h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <p class="text-[10px] font-bold text-[#8B0000] uppercase tracking-widest mb-2">${p.category}</p>
+                    <h3 class="text-xl font-rolex text-[#3E2723] mb-1">${p.name}</h3>
+                    <p class="text-sm text-gray-500 mb-4">Oystersteel & Gold</p>
+                    <span class="text-[#3E2723] font-bold">$${p.price.toLocaleString()}</span>
+                    
+                    <div class="absolute inset-x-0 bottom-0 h-1 bg-[#8B0000] scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                `;
+                container.appendChild(div);
+            });
+
+            // GSAP Animate In
+            gsap.from(".product-card", {
+                y: 30, opacity: 0, stagger: 0.05, duration: 0.5, ease: "power2.out"
+            });
+        }
+
+        // === 3. LOGIC & ROUTING ===
+        function switchView(viewName) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            const landing = document.getElementById('landing-view');
+            const collection = document.getElementById('collection-view');
+            
+            if(viewName === 'collection') {
+                landing.classList.remove('active');
+                setTimeout(() => {
+                    collection.classList.add('active');
+                    renderGrid();
+                }, 300);
+            } else {
+                collection.classList.remove('active');
+                setTimeout(() => {
+                    landing.classList.add('active');
+                    runIntroAnim();
+                }, 300);
+            }
+        }
+
+        function selectProduct(name, price) {
+            document.getElementById('selected-product-name').innerText = name;
+            document.getElementById('selected-product-price').innerText = "$" + price.toLocaleString();
+            
+            gsap.to(window, { duration: 1, scrollTo: "#concierge", ease: "power2.inOut" });
+        }
+
+        function sendToWhatsApp() {
+            const name = document.getElementById('customer-name').value;
+            const city = document.getElementById('customer-city').value;
+            const product = document.getElementById('selected-product-name').innerText;
+            
+            if(product === "None Selected") {
+                alert("Please select a timepiece first.");
+                return;
+            }
+
+            const phone = "923257854274";
+            const msg = `*OFFICIAL INQUIRY - SV VAULT* %0A%0A` +
+                        `🕰 *Model:* ${product} %0A` +
+                        `👤 *Client:* ${name} %0A` +
+                        `📍 *Region:* ${city} %0A%0A` +
+                        `_Requesting availability and pricing confirmation._`;
+            
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+        }
+
+        function runIntroAnim() {
+            gsap.to(".intro-anim", {
+                y: 0, opacity: 1, stagger: 0.2, duration: 1.5, ease: "power3.out", delay: 0.5
+            });
+        }
+
+        // Init
+        window.onload = () => {
+            runIntroAnim();
+        };
+
+        function scrollToSection(id) {
+            gsap.to(window, { duration: 1.2, scrollTo: id, ease: "power2.inOut" });
+        }
+
+    </script>
+</body>
+</html>
